@@ -5,8 +5,8 @@
   :url "https://github.com/TheClimateCorporation/clj-spark"
   :jvm-opts ["-Dlog4j.configuration=file:log4j.properties"]
   :dependencies [[org.clojure/clojure "1.5.0"]
-                 [org.clojure/tools.logging "0.2.3"]
-                 [org.clojure/tools.cli "0.2.1"]
+                 [org.clojure/tools.logging "0.2.6"]
+                 [org.clojure/tools.cli "0.3.1"]
                  [org.clojars.mlimotte/serializable-fn "0.0.3"]]
                                         ; Include te Spark dep for compile and run, but not for uberjar
   :profiles {:dev {:dependencies [[org.apache.hadoop/hadoop-client "1.0.4"]
