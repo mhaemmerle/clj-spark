@@ -2,15 +2,15 @@
   (:use clj-spark.spark.functions)
   (:refer-clojure :exclude [map reduce count filter first take distinct])
   (:require
-    [clojure.tools.logging :as log]
-    [serializable.fn :as sfn]
-    [clojure.string :as s]
-    [clj-spark.util :as util])
+   [clojure.tools.logging :as log]
+   [serializable.fn :as sfn]
+   [clojure.string :as s]
+   [clj-spark.util :as util])
   (:import
-    java.util.Comparator
-    spark.api.java.JavaSparkContext))
+   java.util.Comparator
+   org.apache.spark.api.java.JavaSparkContext))
 
-; Helpers
+                                        ; Helpers
 
 (defn spark-context
   [& {:keys [master job-name spark-home jars environment]}]
@@ -55,7 +55,7 @@
   (fn [coll]
     (clojure.core/map (fn [f x] (f x)) fs coll)))
 
-; RDD construction
+                                        ; RDD construction
 
 (defn text-file
   [spark-context filename]
@@ -65,10 +65,10 @@
   [spark-context lst]
   (.parallelize spark-context lst))
 
-; Transformations
+                                        ; Transformations
 
 (defn echo-types
-  ; TODO make this recursive
+                                        ; TODO make this recursive
   [c]
   (if (coll? c)
     (println "TYPES" (clojure.core/map type c))
@@ -125,22 +125,22 @@
 
 (defn sort-by-key
   ([rdd]
-   (sort-by-key rdd compare true))
+     (sort-by-key rdd compare true))
   ([rdd x]
-    ; Note: RDD has a .sortByKey signature with just a Boolean arg, but it doesn't
-    ; seem to work when I try it, bool is ignored.
-    (if (instance? Boolean x)
-      (sort-by-key rdd compare x)
-      (sort-by-key rdd x true)))
+                                        ; Note: RDD has a .sortByKey signature with just a Boolean arg, but it doesn't
+                                        ; seem to work when I try it, bool is ignored.
+     (if (instance? Boolean x)
+       (sort-by-key rdd compare x)
+       (sort-by-key rdd x true)))
   ([rdd compare-fn asc?]
-   (-> rdd
-       (.map (pair-function identity))
-       (.sortByKey
-         (if (instance? Comparator compare-fn)
-           compare-fn
-           (comparator compare-fn))
-         (util/truthy? asc?))
-       (.map (function untuple)))))
+     (-> rdd
+         (.map (pair-function identity))
+         (.sortByKey
+          (if (instance? Comparator compare-fn)
+            compare-fn
+            (comparator compare-fn))
+          (util/truthy? asc?))
+         (.map (function untuple)))))
 
 (defn join
   [rdd other]
@@ -149,7 +149,7 @@
       (.join (.map other (pair-function identity)))
       (.map (function double-untuple))))
 
-; Actions
+                                        ; Actions
 
 (def first (memfn first))
 
@@ -161,7 +161,7 @@
 
 (def collect (memfn collect))
 
-; take defined with memfn fails with an ArityException, so doing this instead:
+                                        ; take defined with memfn fails with an ArityException, so doing this instead:
 (defn take
   [rdd cnt]
   (.take rdd cnt))

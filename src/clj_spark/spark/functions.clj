@@ -1,9 +1,9 @@
 (ns clj-spark.spark.functions
   (:require
-    [clj-spark.util]
-    [serializable.fn :as sfn])
+   [clj-spark.util]
+   [serializable.fn :as sfn])
   (:import
-    scala.Tuple2))
+   scala.Tuple2))
 
 ;;; Helpers
 
@@ -26,7 +26,7 @@
 
 (defn -call
   [this & xs]
-  ; A little ugly that I have to do the deser here, but I tried in the -init fn and it failed.  Maybe it would work in a :post-init?
+                                        ; A little ugly that I have to do the deser here, but I tried in the -init fn and it failed.  Maybe it would work in a :post-init?
   (let [fn-or-serfn (.state this)
         f (if (instance? array-of-bytes-type fn-or-serfn)
             (deserialize-fn fn-or-serfn)
@@ -45,18 +45,18 @@
         prefix-sym (mk-sym "%s-" clazz)
         ]
     `(do
-      (def ~(mk-sym "%s-init" clazz) -init)
-      (def ~(mk-sym "%s-call" clazz) -call)
-      (gen-class
+       (def ~(mk-sym "%s-init" clazz) -init)
+       (def ~(mk-sym "%s-call" clazz) -call)
+       (gen-class
         :name ~new-class-sym
-        :extends ~(mk-sym "spark.api.java.function.%s" clazz)
+        :extends ~(mk-sym "org.apache.spark.api.java.function.%s" clazz)
         :prefix ~prefix-sym
         :init ~'init
         :state ~'state
         :constructors {[Object] []})
-      (defn ~wrapper-name [f#]
-        (new ~new-class-sym
-          (if (serfn? f#) (serialize-fn f#) f#))))))
+       (defn ~wrapper-name [f#]
+         (new ~new-class-sym
+              (if (serfn? f#) (serialize-fn f#) f#))))))
 
 (gen-function Function function)
 
@@ -68,7 +68,7 @@
 
 (gen-function PairFunction pair-function)
 
-; Replaces the PairFunction-call defined by the gen-function macro.
+                                        ; Replaces the PairFunction-call defined by the gen-function macro.
 (defn PairFunction-call
   [this x]
   (let [[a b] (-call this x)] (Tuple2. a b)))
