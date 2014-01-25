@@ -1,4 +1,4 @@
-clj-spark
+CLJ-SPARK [![Build Status](https://travis-ci.org/r0man/clj-spark.png)](https://travis-ci.org/r0man/clj-spark)
 =========
 
 A Clojure api for the Spark Project.  It is useable, but not complete.  I
