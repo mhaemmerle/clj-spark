@@ -17,6 +17,20 @@
   (log/warn "JavaSparkContext" master job-name spark-home jars environment)
   (JavaSparkContext. master job-name spark-home (into-array String jars) environment))
 
+(defn context
+  "Create a new Spark context."
+  [master app-name & [opts]]
+  (JavaSparkContext.
+   master app-name
+   (:spark-home opts)
+   (into-array String (:jars opts))
+   (or (:env opts) {})))
+
+(defmacro with-context [[symbol master app-name & [opts]] & body]
+  `(let [~symbol (context ~master ~app-name ~opts)]
+     (try ~@body
+          (finally (.stop ~symbol)))))
+
 (defn- untuple
   [t]
   [(._1 t) (._2 t)])
@@ -91,7 +105,7 @@
 
 (defn flat-map
   [rdd f]
-  (.map rdd (flat-map-function f)))
+  (.flatMap rdd (flat-map-function f)))
 
 (defn filter
   [rdd f]
