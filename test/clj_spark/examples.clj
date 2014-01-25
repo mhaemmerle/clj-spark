@@ -1,4 +1,4 @@
-(ns clj-spark.examples.word-count
+(ns clj-spark.examples
   (:refer-clojure :exclude [fn])
   (:require [clojure.string :refer [split]]
             [clojure.test :refer :all]
