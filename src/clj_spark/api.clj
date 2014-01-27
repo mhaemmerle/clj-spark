@@ -23,7 +23,7 @@
   (JavaSparkContext.
    (or master "local")
    (or app-name "REPL")
-   (:spark-home opts)
+   (or (:spark-home opts) (System/getenv "SPARK_HOME"))
    (into-array String (:jars opts))
    (or (:env opts) {})))
 
