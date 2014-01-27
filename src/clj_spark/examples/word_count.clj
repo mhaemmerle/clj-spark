@@ -14,7 +14,7 @@
 
 (defn -main [& args]
   (let [[master file] args]
-    (if-not (and master file)
+    (when (some nil? [master file])
       (println "Usage: word-count <master> <file>")
       (System/exit 1))
     (k/with-context [context master "word-count"]
