@@ -19,9 +19,10 @@
 
 (defn context
   "Create a new Spark context."
-  [master app-name & [opts]]
+  [& [master app-name & [opts]]]
   (JavaSparkContext.
-   master app-name
+   (or master "local")
+   (or app-name "REPL")
    (:spark-home opts)
    (into-array String (:jars opts))
    (or (:env opts) {})))

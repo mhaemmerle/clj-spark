@@ -5,6 +5,9 @@
   (:import [org.apache.spark.api.java JavaSparkContext]))
 
 (deftest test-context
+  (let [context (k/context)]
+    (is (instance? JavaSparkContext context))
+    (.stop context))
   (let [context (k/context "local" "test-context")]
     (is (instance? JavaSparkContext context))
     (.stop context)))
