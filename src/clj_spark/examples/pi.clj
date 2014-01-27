@@ -16,9 +16,9 @@
       (/ (double n))))
 
 (defn -main [& args]
-  (let [[master n] args]
+  (let [[master n & jars] args]
     (if-not (and master n)
       (println "Usage: pi <master> N")
       (System/exit 1))
-    (k/with-context [context master "pi"]
+    (k/with-context [context master "pi" {:jars jars}]
       (prn (pi context n)))))
