@@ -15,8 +15,7 @@
       (k/flat-map (fn [x] (split x #"\s+")))
       (k/map (fn [word] [word 1]))
       (k/reduce-by-key +)
-      (.collect)
-      (->> (into []))))
+      (.collect)))
 
 (deftest test-text-search
   (k/with-context [context "local" "test-text-search"]
