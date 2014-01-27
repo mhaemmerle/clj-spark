@@ -8,6 +8,3 @@
   (-> (.textFile context file)
       (k/filter (fn [x] (.contains x word)))
       (k/count)))
-
-(defn -main [& args]
-  (let [[master file] args]))
