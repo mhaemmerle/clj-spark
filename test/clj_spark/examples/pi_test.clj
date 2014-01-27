@@ -6,4 +6,4 @@
 
 (deftest test-pi
   (k/with-context [context "local" "test-pi"]
-    (is (= "3.14" (format "%.2f" (pi context 100000))))))
+    (is (= "3.1" (format "%.1f" (pi context 100000))))))
