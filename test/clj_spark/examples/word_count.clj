@@ -1,14 +1,9 @@
-(ns clj-spark.examples
+(ns clj-spark.examples.word-count
   (:refer-clojure :exclude [fn])
   (:require [clojure.string :refer [split]]
             [clojure.test :refer :all]
             [clj-spark.api :as k]
             [serializable.fn :refer [fn]]))
-
-(defn text-search [context file word]
-  (-> (.textFile context file)
-      (k/filter (fn [x] (.contains x word)))
-      (k/count)))
 
 (defn word-count [context file]
   (-> (.textFile context file)
@@ -16,10 +11,6 @@
       (k/map (fn [word] [word 1]))
       (k/reduce-by-key +)
       (.collect)))
-
-(deftest test-text-search
-  (k/with-context [context "local" "test-text-search"]
-    (is (= 15 (text-search context "LICENSE" "License")))))
 
 (deftest test-word-count
   (k/with-context [context "local" "test-word-count"]
