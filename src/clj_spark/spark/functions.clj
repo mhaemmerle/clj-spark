@@ -50,10 +50,19 @@
        (gen-class
         :name ~new-class-sym
         :extends ~(mk-sym "org.apache.spark.api.java.function.%s" clazz)
+        :implements [java.io.Serializable]
         :prefix ~prefix-sym
         :init ~'init
         :state ~'state
         :constructors {[Object] []})
+       (defn ~(symbol (str prefix-sym "writeObject")) [this# out#]
+         (prn "WRITE OBJECT"))
+       (defn ~(symbol (str prefix-sym "readObject")) [this# in#]
+         (prn "READ OBJECT"))
+       (defn ~(symbol (str prefix-sym "readObjectNoData")) [this# in#]
+         (prn "READ OBJECT NO DATA"))
+       (defn ~(symbol (str prefix-sym "toString")) [this#]
+         "MOO")
        (defn ~wrapper-name [f#]
          (new ~new-class-sym
               (if (serfn? f#) (serialize-fn f#) f#))))))
@@ -72,3 +81,20 @@
 (defn PairFunction-call
   [this x]
   (let [[a b] (-call this x)] (Tuple2. a b)))
+
+(defn function
+  [fn] (clj_spark.fn.Function. fn))
+
+;; (.call (function (fn [x y] x)) [1 2])
+
+(import java.io.ByteArrayOutputStream)
+(import java.io.ObjectOutputStream)
+
+(let [bos (ByteArrayOutputStream.)
+      out (ObjectOutputStream. bos)]
+  (.writeObject out (clj_spark.fn.Base."f"))
+  bos)
+
+;; (import 'clj_spark.fn.Base)
+(str (clj_spark.fn.Base."f"))
+(class (fn []))
