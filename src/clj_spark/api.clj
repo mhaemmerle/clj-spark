@@ -6,9 +6,10 @@
    [serializable.fn :as sfn]
    [clojure.string :as s]
    [clj-spark.util :as util])
-  (:import
-   java.util.Comparator
-   org.apache.spark.api.java.JavaSparkContext))
+  (:import java.util.Comparator
+           scala.Tuple2
+           [clj_spark.fn Function Function2 FlatMapFunction PairFunction]
+           [org.apache.spark.api.java JavaSparkContext JavaRDD]))
 
                                         ; Helpers
 
@@ -33,7 +34,7 @@
           (finally (.stop ~symbol)))))
 
 (defn- untuple
-  [t]
+  [^Tuple2 t]
   [(._1 t) (._2 t)])
 
 (defn- double-untuple
@@ -73,12 +74,12 @@
                                         ; RDD construction
 
 (defn text-file
-  [spark-context filename]
-  (.textFile spark-context filename))
+  [^JavaSparkContext context filename]
+  (.textFile context filename))
 
 (defn parallelize
-  [spark-context lst]
-  (.parallelize spark-context lst))
+  [^JavaSparkContext context lst]
+  (.parallelize context lst))
 
                                         ; Transformations
 
@@ -97,59 +98,59 @@
     x))
 
 (defn map
-  [rdd f]
-  (.map rdd (function f)))
+  [^JavaRDD rdd f]
+  (.map rdd (Function. f)))
 
 (defn reduce
-  [rdd f]
-  (.reduce rdd (function2 f)))
+  [^JavaRDD rdd f]
+  (.reduce rdd (Function2. f)))
 
 (defn flat-map
-  [rdd f]
-  (.flatMap rdd (flat-map-function f)))
+  [^JavaRDD rdd f]
+  (.flatMap rdd (FlatMapFunction. f)))
 
 (defn filter
-  [rdd f]
-  (.filter rdd (function (ftruthy? f))))
+  [^JavaRDD rdd f]
+  (.filter rdd (Function. (ftruthy? f))))
 
 (defn foreach
-  [rdd f]
+  [^JavaRDD rdd f]
   (.foreach rdd (void-function f)))
 
 (defn aggregate
-  [rdd zero-value seq-op comb-op]
+  [^JavaRDD rdd zero-value seq-op comb-op]
   (.aggregate rdd zero-value (function2 seq-op) (function2 comb-op)))
 
 (defn fold
-  [rdd zero-value f]
+  [^JavaRDD rdd zero-value f]
   (.fold rdd zero-value (function2 f)))
 
 (defn reduce-by-key
-  [rdd f]
+  [^JavaRDD rdd f]
   (-> rdd
-      (.map (pair-function identity))
+      (.map (PairFunction. identity))
       (.reduceByKey (function2 f))
       (.map (function untuple))))
 
 (defn group-by-key
-  [rdd]
+  [^JavaRDD rdd]
   (-> rdd
-      (.map (pair-function identity))
+      (.map (PairFunction. identity))
       .groupByKey
       (.map (function untuple))))
 
 (defn sort-by-key
-  ([rdd]
+  ([^JavaRDD rdd]
      (sort-by-key rdd compare true))
-  ([rdd x]
+  ([^JavaRDD rdd x]
                                         ; Note: RDD has a .sortByKey signature with just a Boolean arg, but it doesn't
                                         ; seem to work when I try it, bool is ignored.
      (if (instance? Boolean x)
        (sort-by-key rdd compare x)
        (sort-by-key rdd x true)))
-  ([rdd compare-fn asc?]
+  ([^JavaRDD rdd compare-fn asc?]
      (-> rdd
-         (.map (pair-function identity))
+         (.map (PairFunction. identity))
          (.sortByKey
           (if (instance? Comparator compare-fn)
             compare-fn
@@ -158,10 +159,10 @@
          (.map (function untuple)))))
 
 (defn join
-  [rdd other]
+  [^JavaRDD rdd ^JavaRDD other]
   (-> rdd
-      (.map (pair-function identity))
-      (.join (.map other (pair-function identity)))
+      (.map (PairFunction. identity))
+      (.join (.map other (PairFunction. identity)))
       (.map (function double-untuple))))
 
                                         ; Actions
@@ -178,7 +179,7 @@
 
                                         ; take defined with memfn fails with an ArityException, so doing this instead:
 (defn take
-  [rdd cnt]
+  [^JavaRDD rdd cnt]
   (.take rdd cnt))
 
 (def distinct (memfn distinct))
