@@ -9,7 +9,7 @@
            [clj_spark.spark.functions Function Function2 FlatMapFunction PairFunction VoidFunction]))
 
 (defn word-count [context file]
-  (-> (.textFile context file)
+  (-> (k/text-file context file)
       (k/flat-map (fn [^String x] (seq (.split x " "))))
       (k/map (fn [word] [word 1]))
       (k/reduce-by-key +)
