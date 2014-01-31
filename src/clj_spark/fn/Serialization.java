@@ -9,7 +9,7 @@ import clojure.lang.RT;
 import clojure.lang.Symbol;
 import clojure.lang.Var;
 
-public class Base {
+public class Serialization {
   
   private static Var deserializer = null; 
   private static Var serializer = null;

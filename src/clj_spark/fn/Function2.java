@@ -6,31 +6,27 @@ import java.io.ObjectOutputStream;
 
 import clojure.lang.IFn;
 
-public class Function2<T1, T2, R> extends org.apache.spark.api.java.function.Function2<T1, T2, R> {
+public class Function2 extends org.apache.spark.api.java.function.Function2<Object, Object, Object> {
   
   private static final long serialVersionUID = 7526471155622776147L;
   
   private IFn fn;
 
   public Function2(IFn fn) {
-    System.out.println("Function constructor");
-    System.out.println(fn);
     this.fn = fn;
   }
 
   @Override
-  public R call(T1 arg1, T2 arg2) throws Exception {
-    return (R) fn.invoke(arg1, arg2);
+  public Object call(Object arg1, Object arg2) throws Exception {
+    return fn.invoke(arg1, arg2);
   }
 
   private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
-    System.out.println("Function2: deserialize");
-    this.fn = Base.deserializeFn(aInputStream);
+    this.fn = Serialization.deserializeFn(aInputStream);
   }
 
   private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
-    System.out.println("Function2: serialize");
-    Base.serializeFn(aOutputStream, this.fn);
+    Serialization.serializeFn(aOutputStream, this.fn);
   }
 
 }

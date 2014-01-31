@@ -9,32 +9,28 @@ import scala.Tuple2;
 import clojure.lang.IFn;
 import clojure.lang.ISeq;
 
-public class PairFunction<T, K, V> extends org.apache.spark.api.java.function.PairFunction<T, K, V> {
+public class PairFunction extends org.apache.spark.api.java.function.PairFunction<Object, Object, Tuple2> {
   
   private static final long serialVersionUID = 7526471155622776147L;
 
   private IFn fn;
 
   public PairFunction(IFn fn) {
-    System.out.println("PairFunction constructor");
-    System.out.println(fn);
     this.fn = fn;
   }
 
   @Override
-  public Tuple2<K, V> call(T arg) throws Exception {
-    List result = (List) fn.invoke(arg);
-    return new Tuple2(result.get(0), result.get(1));
+  public Tuple2 call(Object arg) throws Exception {
+    List<Object> result = (List<Object>) fn.invoke(arg);
+    return new Tuple2<Object, Object>(result.get(0), result.get(1));
   }  
     
   private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
-    System.out.println("PairFunction: deserialize");
-    this.fn = Base.deserializeFn(aInputStream);
+    this.fn = Serialization.deserializeFn(aInputStream);
   }
 
   private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
-    System.out.println("PairFunction: serialize");
-    Base.serializeFn(aOutputStream, this.fn);
+    Serialization.serializeFn(aOutputStream, this.fn);
   }
 
 }

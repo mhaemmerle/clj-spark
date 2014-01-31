@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 
 import clojure.lang.IFn;
 
-public class FlatMapFunction<T, R> extends org.apache.spark.api.java.function.FlatMapFunction<T, R> {
+public class FlatMapFunction extends org.apache.spark.api.java.function.FlatMapFunction<Object, Object> {
   
   private static final long serialVersionUID = 7526471155622776147L;
 
@@ -17,20 +17,18 @@ public class FlatMapFunction<T, R> extends org.apache.spark.api.java.function.Fl
     System.out.println(fn);
     this.fn = fn;
   }
-
+  
   @Override
-  public Iterable<R> call(T arg) throws Exception {
-    return (Iterable<R>) fn.invoke(arg);
+  public Iterable<Object> call(Object arg) throws Exception {
+    return (Iterable<Object>) fn.invoke(arg);
   }
     
   private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
-    System.out.println("FlatMapFunction: deserialize");
-    this.fn = Base.deserializeFn(aInputStream);
+    this.fn = Serialization.deserializeFn(aInputStream);
   }
 
   private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
-    System.out.println("FlatMapFunction: serialize");
-    Base.serializeFn(aOutputStream, this.fn);
+    Serialization.serializeFn(aOutputStream, this.fn);
   }  
 
 }
