@@ -13,8 +13,6 @@ public class FlatMapFunction extends org.apache.spark.api.java.function.FlatMapF
   private IFn fn;
 
   public FlatMapFunction(IFn fn) {
-    System.out.println("FlatMapFunction constructor");
-    System.out.println(fn);
     this.fn = fn;
   }
   
