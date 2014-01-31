@@ -4,29 +4,33 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-public class Base implements java.io.Serializable {
+import clojure.lang.RT;
+import clojure.lang.Symbol;
+import clojure.lang.Var;
 
-    public String fn;
+public class Base {
+  
+  private static Var deserializer = null; 
+  private static Var serializer = null;
+  
+  static {
+    Var require = RT.var("clojure.core", "require");
+    require.invoke(Symbol.create("serializable.fn"));
+    deserializer = RT.var("serializable.fn", "deserialize");
+    serializer = RT.var("serializable.fn", "serialize");
+  }
 
-    public Base(String fn) {
-    	System.out.println("constructor");
-	this.fn = fn;
-    }
+  public static Object deserializeFn(ObjectInputStream input) throws IOException {
+    int length = input.readInt();
+    byte[] serialized = new byte[length];
+    input.readFully(serialized);    
+    return deserializer.invoke(serialized);
+  }
 
-    private static final long serialVersionUID = 7526471155622776147L;
-
-    private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
-	System.out.println("readObject");
-	aInputStream.defaultReadObject();
-    }
-
-    private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
-	System.out.println("writeObject");
-	aOutputStream.defaultWriteObject();
-    }
-
-    public String toString() {
-	return fn;
-    }
+  public static void serializeFn(ObjectOutputStream output, Object fn) throws IOException {    
+    byte[] serialized = (byte[]) serializer.invoke(fn);   
+    output.writeInt(serialized.length);
+    output.write(serialized, 0, serialized.length);
+  }
 
 }

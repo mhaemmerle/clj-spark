@@ -85,16 +85,27 @@
 (defn function
   [fn] (clj_spark.fn.Function. fn))
 
+(defn function2
+  [fn] (clj_spark.fn.Function2. fn))
+
+(defn flat-map-function
+  [fn] (clj_spark.fn.FlatMapFunction. fn))
+
+(defn pair-function
+  [fn] (clj_spark.fn.PairFunction. fn))
+
 ;; (.call (function (fn [x y] x)) [1 2])
 
-(import java.io.ByteArrayOutputStream)
-(import java.io.ObjectOutputStream)
+;; (import java.io.ByteArrayOutputStream)
+;; (import java.io.ObjectOutputStream)
 
-(let [bos (ByteArrayOutputStream.)
-      out (ObjectOutputStream. bos)]
-  (.writeObject out (clj_spark.fn.Base."f"))
-  bos)
+;; (let [bos (ByteArrayOutputStream.)
+;;       out (ObjectOutputStream. bos)]
+;;   (.writeObject out (clj_spark.fn.Base."f"))
+;;   bos)
 
-;; (import 'clj_spark.fn.Base)
-(str (clj_spark.fn.Base."f"))
-(class (fn []))
+;; (sfn/deserialize (sfn/serialize (sfn/fn [x] x)))
+
+;; ;; (import 'clj_spark.fn.Base)
+;; (str (clj_spark.fn.Base."f"))
+;; (class (fn []))

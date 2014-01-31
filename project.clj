@@ -17,4 +17,5 @@
         clj-spark.util
         clj-spark.examples.query
         clj-spark.examples.word-count]
-  :main clj-spark.examples.query)
+  :main clj-spark.examples.query
+  :warn-on-reflection true)

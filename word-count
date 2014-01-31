@@ -7,4 +7,4 @@ CLASSPATH="$CLASSPATH:$SPARK_HOME/examples/target/scala-2.9.3/spark-examples-ass
 CLASSPATH="$CLASSPATH:$SPARK_HOME/conf"
 CLASSPATH="$CLASSPATH:$SPARK_HOME/assembly/target/scala-2.9.3/spark-assembly-0.8.1-incubating-hadoop1.0.4.jar"
 CLASSPATH="$CLASSPATH:/etc/hadoop"
-java -cp $CLASSPATH clj_spark.examples.word_count spark://bombaclaat:7077 LICENSE $JAR
+time java -cp $CLASSPATH clj_spark.examples.word_count spark://bombaclaat:7077 WORDS $JAR

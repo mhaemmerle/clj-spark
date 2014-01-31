@@ -10,7 +10,7 @@
 
 (defn word-count [context file]
   (-> (.textFile context file)
-      (k/flat-map (fn [x] (split x #"\s+")))
+      (k/flat-map (fn [x] (seq (.split x " "))))
       (k/map (fn [word] [word 1]))
       (k/reduce-by-key +)
       (.collect)))
