@@ -21,12 +21,12 @@ public class Function extends org.apache.spark.api.java.function.Function<Object
     return fn.invoke(arg);
   }
 
-  private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
-    this.fn = Serialization.deserializeFn(aInputStream);
+  private void readObject(ObjectInputStream input) throws ClassNotFoundException, IOException {
+    this.fn = Serialization.deserializeFn(input);
   }
 
-  private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
-    Serialization.serializeFn(aOutputStream, this.fn);
+  private void writeObject(ObjectOutputStream output) throws IOException {
+    Serialization.serializeFn(output, this.fn);
   }
   
 }

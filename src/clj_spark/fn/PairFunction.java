@@ -7,7 +7,6 @@ import java.util.List;
 
 import scala.Tuple2;
 import clojure.lang.IFn;
-import clojure.lang.ISeq;
 
 public class PairFunction extends org.apache.spark.api.java.function.PairFunction<Object, Object, Tuple2> {
   
@@ -25,12 +24,12 @@ public class PairFunction extends org.apache.spark.api.java.function.PairFunctio
     return new Tuple2<Object, Object>(result.get(0), result.get(1));
   }  
     
-  private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
-    this.fn = Serialization.deserializeFn(aInputStream);
+  private void readObject(ObjectInputStream input) throws ClassNotFoundException, IOException {
+    this.fn = Serialization.deserializeFn(input);
   }
 
-  private void writeObject(ObjectOutputStream aOutputStream) throws IOException {
-    Serialization.serializeFn(aOutputStream, this.fn);
+  private void writeObject(ObjectOutputStream output) throws IOException {
+    Serialization.serializeFn(output, this.fn);
   }
 
 }
