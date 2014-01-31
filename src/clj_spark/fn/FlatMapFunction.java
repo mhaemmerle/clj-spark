@@ -10,9 +10,9 @@ public class FlatMapFunction<T, R> extends org.apache.spark.api.java.function.Fl
   
   private static final long serialVersionUID = 7526471155622776147L;
 
-  private Object fn;
+  private IFn fn;
 
-  public FlatMapFunction(Object fn) {
+  public FlatMapFunction(IFn fn) {
     System.out.println("FlatMapFunction constructor");
     System.out.println(fn);
     this.fn = fn;
@@ -20,7 +20,7 @@ public class FlatMapFunction<T, R> extends org.apache.spark.api.java.function.Fl
 
   @Override
   public Iterable<R> call(T arg) throws Exception {
-    return (Iterable<R>) ((IFn) fn).invoke(arg);
+    return (Iterable<R>) fn.invoke(arg);
   }
     
   private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {

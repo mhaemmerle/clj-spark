@@ -13,9 +13,9 @@ public class PairFunction<T, K, V> extends org.apache.spark.api.java.function.Pa
   
   private static final long serialVersionUID = 7526471155622776147L;
 
-  private Object fn;
+  private IFn fn;
 
-  public PairFunction(Object fn) {
+  public PairFunction(IFn fn) {
     System.out.println("PairFunction constructor");
     System.out.println(fn);
     this.fn = fn;
@@ -23,7 +23,7 @@ public class PairFunction<T, K, V> extends org.apache.spark.api.java.function.Pa
 
   @Override
   public Tuple2<K, V> call(T arg) throws Exception {
-    List result = (List) ((IFn) fn).invoke(arg);
+    List result = (List) fn.invoke(arg);
     return new Tuple2(result.get(0), result.get(1));
   }  
     

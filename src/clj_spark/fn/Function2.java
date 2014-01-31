@@ -10,9 +10,9 @@ public class Function2<T1, T2, R> extends org.apache.spark.api.java.function.Fun
   
   private static final long serialVersionUID = 7526471155622776147L;
   
-  private Object fn;
+  private IFn fn;
 
-  public Function2(Object fn) {
+  public Function2(IFn fn) {
     System.out.println("Function constructor");
     System.out.println(fn);
     this.fn = fn;
@@ -20,7 +20,7 @@ public class Function2<T1, T2, R> extends org.apache.spark.api.java.function.Fun
 
   @Override
   public R call(T1 arg1, T2 arg2) throws Exception {
-    return (R) ((IFn) fn).invoke(arg1, arg2);
+    return (R) fn.invoke(arg1, arg2);
   }
 
   private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {

@@ -12,16 +12,16 @@ public class Function<T, R> extends org.apache.spark.api.java.function.Function<
 
   private static final long serialVersionUID = 7526471155622776147L;
   
-  private Object fn;
+  private IFn fn;
 
-  public Function(Object fn) {
+  public Function(IFn fn) {
     System.out.println("Function constructor");
     System.out.println(fn);
     this.fn = fn;
   }
 
   public Object call(Object arg) {
-    return ((IFn) fn).invoke(arg);
+    return fn.invoke(arg);
   }
 
   private void readObject(ObjectInputStream aInputStream) throws ClassNotFoundException, IOException {
