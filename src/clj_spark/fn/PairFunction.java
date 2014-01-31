@@ -3,7 +3,8 @@ package clj_spark.fn;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
 
 import scala.Tuple2;
 import clojure.lang.IFn;
@@ -20,8 +21,9 @@ public class PairFunction extends org.apache.spark.api.java.function.PairFunctio
 
   @Override
   public Tuple2 call(Object arg) throws Exception {
-    List<Object> result = (List<Object>) fn.invoke(arg);
-    return new Tuple2<Object, Object>(result.get(0), result.get(1));
+    @SuppressWarnings("unchecked")
+    Iterator<Object> iterator = ((Collection<Object>) fn.invoke(arg)).iterator();
+    return new Tuple2<Object, Object>(iterator.next(), iterator.next());
   }  
     
   private void readObject(ObjectInputStream input) throws ClassNotFoundException, IOException {
