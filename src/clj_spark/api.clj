@@ -129,15 +129,15 @@
   [^JavaRDD rdd f]
   (-> rdd
       (.map (PairFunction. identity))
-      (.reduceByKey (function2 f))
-      (.map (function untuple))))
+      (.reduceByKey (Function2. f))
+      (.map (Function. untuple))))
 
 (defn group-by-key
   [^JavaRDD rdd]
   (-> rdd
       (.map (PairFunction. identity))
       .groupByKey
-      (.map (function untuple))))
+      (.map (Function. untuple))))
 
 (defn sort-by-key
   ([^JavaRDD rdd]
@@ -156,14 +156,14 @@
             compare-fn
             (comparator compare-fn))
           (util/truthy? asc?))
-         (.map (function untuple)))))
+         (.map (Function. untuple)))))
 
 (defn join
   [^JavaRDD rdd ^JavaRDD other]
   (-> rdd
       (.map (PairFunction. identity))
       (.join (.map other (PairFunction. identity)))
-      (.map (function double-untuple))))
+      (.map (Function. double-untuple))))
 
                                         ; Actions
 

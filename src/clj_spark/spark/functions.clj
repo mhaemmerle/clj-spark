@@ -27,6 +27,7 @@
 (defn -call
   [this & xs]
                                         ; A little ugly that I have to do the deser here, but I tried in the -init fn and it failed.  Maybe it would work in a :post-init?
+  (println "SLOW CALL !!!")
   (let [fn-or-serfn (.state this)
         f (if (instance? array-of-bytes-type fn-or-serfn)
             (deserialize-fn fn-or-serfn)
@@ -81,31 +82,3 @@
 (defn PairFunction-call
   [this x]
   (let [[a b] (-call this x)] (Tuple2. a b)))
-
-(defn function
-  [fn] (clj_spark.fn.Function. fn))
-
-(defn function2
-  [fn] (clj_spark.fn.Function2. fn))
-
-(defn flat-map-function
-  [fn] (clj_spark.fn.FlatMapFunction. fn))
-
-(defn pair-function
-  [fn] (clj_spark.fn.PairFunction. fn))
-
-;; (.call (function (fn [x y] x)) [1 2])
-
-;; (import java.io.ByteArrayOutputStream)
-;; (import java.io.ObjectOutputStream)
-
-;; (let [bos (ByteArrayOutputStream.)
-;;       out (ObjectOutputStream. bos)]
-;;   (.writeObject out (clj_spark.fn.Base."f"))
-;;   bos)
-
-;; (sfn/deserialize (sfn/serialize (sfn/fn [x] x)))
-
-;; ;; (import 'clj_spark.fn.Base)
-;; (str (clj_spark.fn.Base."f"))
-;; (class (fn []))
