@@ -4,9 +4,7 @@
   (:require [clojure.string :refer [split]]
             [clj-spark.api :as k]
             [serializable.fn :refer [fn]]
-            [clj_spark.spark.functions])
-  (:import java.util.Comparator org.apache.spark.api.java.JavaSparkContext
-           [clj_spark.spark.functions Function Function2 FlatMapFunction PairFunction VoidFunction]))
+            [clj_spark.spark.functions]))
 
 (defn word-count [context file]
   (-> (k/text-file context file)
