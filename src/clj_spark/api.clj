@@ -143,8 +143,8 @@
   ([^JavaRDD rdd]
      (sort-by-key rdd compare true))
   ([^JavaRDD rdd x]
-                                        ; Note: RDD has a .sortByKey signature with just a Boolean arg, but it doesn't
-                                        ; seem to work when I try it, bool is ignored.
+     ;; Note: RDD has a .sortByKey signature with just a Boolean arg,
+     ;; but it doesn't seem to work when I try it, bool is ignored.
      (if (instance? Boolean x)
        (sort-by-key rdd compare x)
        (sort-by-key rdd x true)))
@@ -165,21 +165,14 @@
       (.join (.map other (PairFunction. identity)))
       (.map (Function. double-untuple))))
 
-                                        ; Actions
-
-(def first (memfn first))
-
+(def cache (memfn cache))
+(def collect (memfn collect))
 (def count (memfn count))
-
+(def distinct (memfn distinct))
+(def first (memfn first))
 (def glom (memfn glom))
 
-(def cache (memfn cache))
-
-(def collect (memfn collect))
-
-                                        ; take defined with memfn fails with an ArityException, so doing this instead:
+;; take defined with memfn fails with an ArityException, so doing this instead:
 (defn take
   [^JavaRDD rdd cnt]
   (.take rdd cnt))
-
-(def distinct (memfn distinct))
