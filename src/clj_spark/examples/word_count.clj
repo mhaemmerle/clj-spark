@@ -10,7 +10,7 @@
       (k/flat-map (fn [^String x] (seq (.split x " "))))
       (k/map (fn [word] [word 1]))
       (k/reduce-by-key +)
-      (.collect)))
+      (k/collect)))
 
 (defn -main [& args]
   (let [[master file & jars] args]
