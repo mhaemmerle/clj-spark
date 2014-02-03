@@ -15,4 +15,4 @@
         clj-spark.util
         clj-spark.examples.query
         clj-spark.examples.word-count]
-  :global-vars {*warn-on-reflection* true})
+  :global-vars {*warn-on-reflection* false})
