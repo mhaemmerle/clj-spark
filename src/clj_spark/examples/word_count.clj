@@ -3,8 +3,7 @@
   (:refer-clojure :exclude [fn])
   (:require [clojure.string :refer [split]]
             [clj-spark.api :as k]
-            [serializable.fn :refer [fn]]
-            [clj_spark.spark.functions]))
+            [serializable.fn :refer [fn]]))
 
 (defn word-count [context file]
   (-> (k/text-file context file)

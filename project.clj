@@ -12,8 +12,7 @@
                                        [org.apache.spark/spark-core_2.9.3 "0.8.1-incubating"]]}}
   :repositories {"Akka repository" "http://repo.akka.io/releases"}
   :java-source-paths ["src" "test"]
-  :aot [clj-spark.spark.functions
-        clj-spark.api
+  :aot [clj-spark.api
         clj-spark.util
         clj-spark.examples.query
         clj-spark.examples.word-count]
