@@ -14,7 +14,7 @@
   (log/warn "JavaSparkContext" master job-name spark-home jars environment)
   (JavaSparkContext. master job-name spark-home (into-array String jars) environment))
 
-(defn context
+(defn ^JavaSparkContext context
   "Create a new Spark context."
   [& [master app-name & [opts]]]
   (JavaSparkContext.
