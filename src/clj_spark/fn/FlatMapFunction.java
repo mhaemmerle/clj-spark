@@ -7,8 +7,8 @@ import java.io.ObjectOutputStream;
 import clojure.lang.IFn;
 
 public class FlatMapFunction extends org.apache.spark.api.java.function.FlatMapFunction<Object, Object> {
-  
-  private static final long serialVersionUID = 7526471155622776147L;
+
+  private static final long serialVersionUID = -2838837254816044883L;
 
   private IFn fn;
 

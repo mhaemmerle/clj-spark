@@ -9,8 +9,8 @@ import clojure.lang.IFn;
 
 public class Function extends org.apache.spark.api.java.function.Function<Object, Object> implements Serializable {
 
-  private static final long serialVersionUID = 7526471155622776147L;
-  
+  private static final long serialVersionUID = -5829960612504781472L;
+
   private IFn fn;
 
   public Function(IFn fn) {

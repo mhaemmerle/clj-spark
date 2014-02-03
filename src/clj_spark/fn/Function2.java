@@ -7,8 +7,8 @@ import java.io.ObjectOutputStream;
 import clojure.lang.IFn;
 
 public class Function2 extends org.apache.spark.api.java.function.Function2<Object, Object, Object> {
-  
-  private static final long serialVersionUID = 7526471155622776147L;
+
+  private static final long serialVersionUID = 6752429636516157400L;
   
   private IFn fn;
 

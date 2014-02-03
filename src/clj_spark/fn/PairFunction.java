@@ -10,8 +10,8 @@ import scala.Tuple2;
 import clojure.lang.IFn;
 
 public class PairFunction extends org.apache.spark.api.java.function.PairFunction<Object, Object, Tuple2> {
-  
-  private static final long serialVersionUID = 7526471155622776147L;
+
+  private static final long serialVersionUID = 6365733658860940360L;
 
   private IFn fn;
 
