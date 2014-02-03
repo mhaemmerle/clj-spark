@@ -10,7 +10,6 @@
                  [org.clojars.mlimotte/serializable-fn "0.0.3"]]
   :profiles {:provided {:dependencies [[org.apache.hadoop/hadoop-client "1.0.4"]
                                        [org.apache.spark/spark-core_2.9.3 "0.8.1-incubating"]]}}
-  :repositories {"Akka repository" "http://repo.akka.io/releases"}
   :java-source-paths ["src" "test"]
   :aot [clj-spark.api
         clj-spark.util
