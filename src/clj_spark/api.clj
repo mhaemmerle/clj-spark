@@ -1,17 +1,13 @@
 (ns clj-spark.api
-  (:use clj-spark.spark.functions)
   (:refer-clojure :exclude [map reduce count filter first take distinct])
-  (:require
-   [clojure.tools.logging :as log]
-   [serializable.fn :as sfn]
-   [clojure.string :as s]
-   [clj-spark.util :as util])
+  (:require [clj-spark.util :as util]
+            [clojure.string :as s]
+            [clojure.tools.logging :as log]
+            [serializable.fn :as sfn])
   (:import java.util.Comparator
            scala.Tuple2
-           [clj_spark.fn Function Function2 FlatMapFunction PairFunction]
+           [clj_spark.fn Function Function2 FlatMapFunction PairFunction VoidFunction]
            [org.apache.spark.api.java JavaSparkContext JavaRDD]))
-
-                                        ; Helpers
 
 (defn spark-context
   [& {:keys [master job-name spark-home jars environment]}]
@@ -115,15 +111,15 @@
 
 (defn foreach
   [^JavaRDD rdd f]
-  (.foreach rdd (void-function f)))
+  (.foreach rdd (VoidFunction. f)))
 
 (defn aggregate
   [^JavaRDD rdd zero-value seq-op comb-op]
-  (.aggregate rdd zero-value (function2 seq-op) (function2 comb-op)))
+  (.aggregate rdd zero-value (Function2. seq-op) (Function2. comb-op)))
 
 (defn fold
   [^JavaRDD rdd zero-value f]
-  (.fold rdd zero-value (function2 f)))
+  (.fold rdd zero-value (Function2. f)))
 
 (defn reduce-by-key
   [^JavaRDD rdd f]
