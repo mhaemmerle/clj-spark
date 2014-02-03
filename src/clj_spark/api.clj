@@ -94,34 +94,48 @@
     x))
 
 (defn map
+  "Return a new RDD by applying a function to all elements of this RDD."
   [^JavaRDD rdd f]
   (.map rdd (Function. f)))
 
 (defn reduce
+  "Reduces the elements of this RDD using the specified commutative
+  and associative binary operator."
   [^JavaRDD rdd f]
   (.reduce rdd (Function2. f)))
 
 (defn flat-map
+  "Return a new RDD by first applying a function to all elements of
+  this RDD, and then flattening the results."
   [^JavaRDD rdd f]
   (.flatMap rdd (FlatMapFunction. f)))
 
 (defn filter
+  "Return a new RDD containing only the elements that satisfy a predicate."
   [^JavaRDD rdd f]
   (.filter rdd (Function. (ftruthy? f))))
 
 (defn foreach
+  "Applies a function f to all elements of this RDD."
   [^JavaRDD rdd f]
   (.foreach rdd (VoidFunction. f)))
 
 (defn aggregate
+  "Aggregate the elements of each partition, and then the results for
+  all the partitions, using given combine functions and a neutral zero
+  value."
   [^JavaRDD rdd zero-value seq-op comb-op]
   (.aggregate rdd zero-value (Function2. seq-op) (Function2. comb-op)))
 
 (defn fold
+  "Aggregate the elements of each partition, and then the results for
+  all the partitions, using a given associative function and a neutral
+  zero value."
   [^JavaRDD rdd zero-value f]
   (.fold rdd zero-value (Function2. f)))
 
 (defn reduce-by-key
+  "Merge the values for each key using an associative reduce function."
   [^JavaRDD rdd f]
   (-> rdd
       (.map (PairFunction. identity))
@@ -129,6 +143,7 @@
       (.map (Function. untuple))))
 
 (defn group-by-key
+  "Return an RDD of grouped elements."
   [^JavaRDD rdd]
   (-> rdd
       (.map (PairFunction. identity))
@@ -155,20 +170,48 @@
          (.map (Function. untuple)))))
 
 (defn join
+  "Return an RDD containing all pairs of elements with matching keys
+  in this and other."
   [^JavaRDD rdd ^JavaRDD other]
   (-> rdd
       (.map (PairFunction. identity))
       (.join (.map other (PairFunction. identity)))
       (.map (Function. double-untuple))))
 
-(def cache (memfn cache))
-(def collect (memfn collect))
-(def count (memfn count))
-(def distinct (memfn distinct))
-(def first (memfn first))
-(def glom (memfn glom))
+(defn cache
+  "Persist this RDD with the default storage level (MEMORY_ONLY)."
+  [^JavaRDD rdd]
+  (.cache rdd))
 
-;; take defined with memfn fails with an ArityException, so doing this instead:
+(defn collect
+  "Return a seq that contains all of the elements in this RDD."
+  [^JavaRDD rdd]
+  (.collect rdd))
+
+(defn count
+  "Return the number of elements in the RDD."
+  [^JavaRDD rdd]
+  (.count rdd))
+
+(defn distinct
+  "Return a new RDD containing the distinct elements in this RDD."
+  ([^JavaRDD rdd]
+     (.distinct rdd))
+  ([^JavaRDD rdd partitions]
+     (.distinct rdd partitions)))
+
+(defn first
+  "Return the first element in this RDD."
+  [^JavaRDD rdd]
+  (.first rdd))
+
+(defn glom
+  "Return an RDD created by coalescing all elements within each
+partition into an array."
+  [^JavaRDD rdd]
+  (.glom rdd))
+
 (defn take
+  "Take the first num elements of the RDD."
   [^JavaRDD rdd cnt]
   (.take rdd cnt))
