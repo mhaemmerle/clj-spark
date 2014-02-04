@@ -67,6 +67,11 @@
   (fn [coll]
     (clojure.core/map (fn [f x] (f x)) fs coll)))
 
+(defn jars-of-class [class]
+  (try (seq (JavaSparkContext/jarOfClass class))
+       (catch Exception e
+         (log/warnf "Can't find JAR for class: %s" class))))
+
 (defn text-file
   [^JavaSparkContext context filename]
   (.textFile context filename))
