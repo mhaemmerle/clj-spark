@@ -8,8 +8,7 @@
                  [org.clojure/tools.logging "0.2.6"]
                  [org.clojure/tools.cli "0.3.1"]
                  [org.clojars.mlimotte/serializable-fn "0.0.3"]]
-  :profiles {:provided {:dependencies [[org.apache.hadoop/hadoop-client "1.0.4"]
-                                       [org.apache.spark/spark-core_2.9.3 "0.8.1-incubating"]]}}
+  :profiles {:provided {:dependencies [[org.apache.spark/spark-core_2.10 "0.9.0-incubating"]]}}
   :java-source-paths ["src" "test"]
   :aot [clj-spark.api
         clj-spark.util

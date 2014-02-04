@@ -13,7 +13,8 @@
       (k/collect)))
 
 (defn -main [& args]
-  (let [[master file & jars] args]
+  (let [jars (k/jars-of-class clj_spark.examples.word_count)
+        [master file] args]
     (when (some nil? [master file])
       (println "Usage: word-count <master> <file>")
       (System/exit 1))
