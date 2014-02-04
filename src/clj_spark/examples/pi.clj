@@ -16,7 +16,8 @@
       (/ (double n))))
 
 (defn -main [& args]
-  (let [[master n & jars] args]
+  (let [jars (k/jars-of-class clj_spark.examples.pi)
+        [master n] args]
     (if-not (and master n)
       (println "Usage: pi <master> N")
       (System/exit 1))
