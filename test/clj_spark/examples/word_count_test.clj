@@ -7,4 +7,7 @@
 (deftest test-word-count
   (k/with-context [context "local" "test-word-count"]
     (is (= [["" 27] ["AND" 3] ["making" 1] ["or," 1] ["places:" 1]]
-           (take 5 (word-count context "LICENSE"))))))
+           (->> (k/text-file context "LICENSE")
+                (word-count)
+                (k/collect)
+                (take 5))))))

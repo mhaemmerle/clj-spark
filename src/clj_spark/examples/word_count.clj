@@ -5,12 +5,10 @@
             [clj-spark.api :as k]
             [serializable.fn :refer [fn]]))
 
-(defn word-count [context file]
-  (-> (k/text-file context file)
-      (k/flat-map (fn [^String x] (seq (.split x " "))))
+(defn word-count [lines]
+  (-> (k/flat-map lines (fn [^String line] (seq (.split line " "))))
       (k/map (fn [word] [word 1]))
-      (k/reduce-by-key +)
-      (k/collect)))
+      (k/reduce-by-key +)))
 
 (defn -main [& args]
   (let [jars (k/jars-of-class clj_spark.examples.word_count)
@@ -19,4 +17,6 @@
       (println "Usage: word-count <master> <file>")
       (System/exit 1))
     (k/with-context [context master "word-count" {:jars jars}]
-      (prn (word-count context file)))))
+      (->> (word-count context file)
+           (k/collect)
+           (prn)))))

@@ -27,17 +27,6 @@
    (into-array String (:jars opts))
    (or (:env opts) {})))
 
-(defn ^JavaStreamingContext streaming-context
-  "Create a new Spark streaming context."
-  [& [master app-name & [opts]]]
-  (JavaStreamingContext.
-   (or master "local")
-   (or app-name "REPL")
-   (or (:duration opts) (Duration. 1000))
-   (or (:spark-home opts) (System/getenv "SPARK_HOME"))
-   (into-array String (:jars opts))
-   (or (:env opts) {})))
-
 (defmacro with-context
   "Bind `symbol` to a new Spark context, evaluate `body` and stop the
   context afterwards."
@@ -45,16 +34,6 @@
   `(let [~symbol (context ~master ~app-name ~opts)]
      (try ~@body
           (finally (.stop ~symbol)))))
-
-(defmacro with-streaming-context
-  "Bind `symbol` to a new Spark streaming context, evaluate `body` and
-  stop the execution of the streams afterwards."
-  [[symbol master app-name & [opts]] & body]
-  `(let [~symbol (streaming-context ~master ~app-name ~opts)]
-     (try ~@body
-          (finally
-            (System/clearProperty "spark.master.port") ;; TODO: Still needed?
-            (.stop ~symbol)))))
 
 (defn- untuple
   [^Tuple2 t]
@@ -109,19 +88,19 @@
 
 (defn map
   "Return a new RDD by applying a function to all elements of this RDD."
-  [^JavaRDDLike rdd f]
+  [rdd f]
   (.map rdd (Function. f)))
 
 (defn reduce
   "Reduces the elements of this RDD using the specified commutative
   and associative binary operator."
-  [^JavaRDDLike rdd f]
+  [rdd f]
   (.reduce rdd (Function2. f)))
 
 (defn flat-map
   "Return a new RDD by first applying a function to all elements of
   this RDD, and then flattening the results."
-  [^JavaRDDLike rdd f]
+  [rdd f]
   (.flatMap rdd (FlatMapFunction. f)))
 
 (defn filter
@@ -131,26 +110,26 @@
 
 (defn foreach
   "Applies a function f to all elements of this RDD."
-  [^JavaRDDLike rdd f]
+  [rdd f]
   (.foreach rdd (VoidFunction. f)))
 
 (defn aggregate
   "Aggregate the elements of each partition, and then the results for
   all the partitions, using given combine functions and a neutral zero
   value."
-  [^JavaRDDLike rdd zero-value seq-op comb-op]
+  [rdd zero-value seq-op comb-op]
   (.aggregate rdd zero-value (Function2. seq-op) (Function2. comb-op)))
 
 (defn fold
   "Aggregate the elements of each partition, and then the results for
   all the partitions, using a given associative function and a neutral
   zero value."
-  [^JavaRDDLike rdd zero-value f]
+  [rdd zero-value f]
   (.fold rdd zero-value (Function2. f)))
 
 (defn reduce-by-key
   "Merge the values for each key using an associative reduce function."
-  [^JavaRDDLike rdd f]
+  [rdd f]
   (-> rdd
       (.map (PairFunction. identity))
       (.reduceByKey (Function2. f))
@@ -158,22 +137,22 @@
 
 (defn group-by-key
   "Return an RDD of grouped elements."
-  [^JavaRDDLike rdd]
+  [rdd]
   (-> rdd
       (.map (PairFunction. identity))
       .groupByKey
       (.map (Function. untuple))))
 
 (defn sort-by-key
-  ([^JavaRDDLike rdd]
+  ([rdd]
      (sort-by-key rdd compare true))
-  ([^JavaRDDLike rdd x]
+  ([rdd x]
      ;; Note: RDD has a .sortByKey signature with just a Boolean arg,
      ;; but it doesn't seem to work when I try it, bool is ignored.
      (if (instance? Boolean x)
        (sort-by-key rdd compare x)
        (sort-by-key rdd x true)))
-  ([^JavaRDDLike rdd compare-fn asc?]
+  ([rdd compare-fn asc?]
      (-> rdd
          (.map (PairFunction. identity))
          (.sortByKey
@@ -186,7 +165,7 @@
 (defn join
   "Return an RDD containing all pairs of elements with matching keys
   in this and other."
-  [^JavaRDDLike rdd ^JavaRDD other]
+  [rdd ^JavaRDD other]
   (-> rdd
       (.map (PairFunction. identity))
       (.join (.map other (PairFunction. identity)))
@@ -199,12 +178,12 @@
 
 (defn collect
   "Return a seq that contains all of the elements in this RDD."
-  [^JavaRDDLike rdd]
+  [rdd]
   (.collect rdd))
 
 (defn count
   "Return the number of elements in the RDD."
-  [^JavaRDDLike rdd]
+  [rdd]
   (.count rdd))
 
 (defn distinct
@@ -216,16 +195,44 @@
 
 (defn first
   "Return the first element in this RDD."
-  [^JavaRDDLike rdd]
+  [rdd]
   (.first rdd))
 
 (defn glom
   "Return an RDD created by coalescing all elements within each
 partition into an array."
-  [^JavaRDDLike rdd]
+  [rdd]
   (.glom rdd))
 
 (defn take
   "Take the first num elements of the RDD."
-  [^JavaRDDLike rdd cnt]
+  [rdd cnt]
   (.take rdd cnt))
+
+;; STREAMING
+
+(defn ^JavaStreamingContext streaming-context
+  "Create a new Spark streaming context."
+  [& [master app-name & [opts]]]
+  (JavaStreamingContext.
+   (or master "local")
+   (or app-name "REPL")
+   (or (:duration opts) (Duration. 1000))
+   (or (:spark-home opts) (System/getenv "SPARK_HOME"))
+   (into-array String (:jars opts))
+   (or (:env opts) {})))
+
+(defmacro with-streaming-context
+  "Bind `symbol` to a new Spark streaming context, evaluate `body` and
+  stop the execution of the streams afterwards."
+  [[symbol master app-name & [opts]] & body]
+  `(let [~symbol (streaming-context ~master ~app-name ~opts)]
+     (try ~@body
+          (finally
+            (System/clearProperty "spark.master.port") ;; TODO: Still needed?
+            (.stop ~symbol)))))
+
+(defn socket-text-stream
+  "Create an input stream from the network source at `hostname` at `port`."
+  [dstream hostname port & [storage-level]]
+  (.socketTextStream dstream hostname port))

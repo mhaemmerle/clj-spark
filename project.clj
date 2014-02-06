@@ -15,5 +15,6 @@
         clj-spark.util
         clj-spark.examples.query
         clj-spark.examples.word-count
+        clj-spark.examples.word-count-network
         clj-spark.examples.pi]
   :global-vars {*warn-on-reflection* false})
