@@ -7,10 +7,13 @@
   (:import java.util.Comparator
            scala.Tuple2
            [clj_spark.fn Function Function2 FlatMapFunction PairFunction VoidFunction]
-           [org.apache.spark.api.java JavaSparkContext JavaRDD JavaRDDLike JavaPairRDD]))
+           [org.apache.spark.api.java JavaSparkContext JavaRDD JavaRDDLike JavaPairRDD]
+           [org.apache.spark.streaming Duration]
+           [org.apache.spark.streaming.api.java JavaStreamingContext]))
 
 (defn spark-context
   [& {:keys [master job-name spark-home jars environment]}]
+  (log/warn "Deprecated: Use clj-spark.api/context instead!")
   (log/warn "JavaSparkContext" master job-name spark-home jars environment)
   (JavaSparkContext. master job-name spark-home (into-array String jars) environment))
 
@@ -24,10 +27,34 @@
    (into-array String (:jars opts))
    (or (:env opts) {})))
 
-(defmacro with-context [[symbol master app-name & [opts]] & body]
+(defn ^JavaStreamingContext streaming-context
+  "Create a new Spark streaming context."
+  [& [master app-name & [opts]]]
+  (JavaStreamingContext.
+   (or master "local")
+   (or app-name "REPL")
+   (or (:duration opts) (Duration. 1000))
+   (or (:spark-home opts) (System/getenv "SPARK_HOME"))
+   (into-array String (:jars opts))
+   (or (:env opts) {})))
+
+(defmacro with-context
+  "Bind `symbol` to a new Spark context, evaluate `body` and stop the
+  context afterwards."
+  [[symbol master app-name & [opts]] & body]
   `(let [~symbol (context ~master ~app-name ~opts)]
      (try ~@body
           (finally (.stop ~symbol)))))
+
+(defmacro with-streaming-context
+  "Bind `symbol` to a new Spark streaming context, evaluate `body` and
+  stop the execution of the streams afterwards."
+  [[symbol master app-name & [opts]] & body]
+  `(let [~symbol (streaming-context ~master ~app-name ~opts)]
+     (try ~@body
+          (finally
+            (System/clearProperty "spark.master.port") ;; TODO: Still needed?
+            (.stop ~symbol)))))
 
 (defn- untuple
   [^Tuple2 t]
