@@ -9,12 +9,15 @@
                  [org.clojure/tools.cli "0.3.1"]
                  [org.clojars.mlimotte/serializable-fn "0.0.3"]]
   :profiles {:provided {:dependencies [[org.apache.spark/spark-core_2.10 "0.9.0-incubating"]
-                                       [org.apache.spark/spark-streaming_2.10 "0.9.0-incubating"]]}}
+                                       [org.apache.spark/spark-streaming_2.10 "0.9.0-incubating"]
+                                       [org.apache.spark/spark-streaming-kafka_2.10 "0.9.0-incubating"]]}}
   :java-source-paths ["src" "test"]
   :aot [clj-spark.api
         clj-spark.util
         clj-spark.examples.query
         clj-spark.examples.word-count
         clj-spark.examples.word-count-network
+        clj-spark.examples.word-count-kafka
         clj-spark.examples.pi]
-  :global-vars {*warn-on-reflection* false})
+  :global-vars {*warn-on-reflection* false}
+  :main clj-spark.examples.word-count-kafka)

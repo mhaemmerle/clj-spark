@@ -110,6 +110,12 @@ user=> (-> r1 (k/map inc) (k/map (fn [t] [(even? t) t])) (k/reduce-by-key +) k/c
 #<ArrayList [[false 63], [true 62]]>
 ```
 
+# Running the Kafka example
+
+```bash
+$ lein2 run local localhost mygroup test 1
+```
+
 # Running on a cluster
 
 ## Start a cluster first

@@ -5,11 +5,13 @@
             [clojure.tools.logging :as log]
             [serializable.fn :as sfn])
   (:import java.util.Comparator
+           java.util.HashMap
            scala.Tuple2
            [clj_spark.fn Function Function2 FlatMapFunction PairFunction VoidFunction]
            [org.apache.spark.api.java JavaSparkContext JavaRDD JavaRDDLike JavaPairRDD]
            [org.apache.spark.streaming Duration]
-           [org.apache.spark.streaming.api.java JavaStreamingContext]))
+           [org.apache.spark.streaming.api.java JavaStreamingContext]
+           [org.apache.spark.streaming.kafka KafkaUtils]))
 
 (defn spark-context
   [& {:keys [master job-name spark-home jars environment]}]
@@ -236,3 +238,8 @@ partition into an array."
   "Create an input stream from the network source at `hostname` at `port`."
   [dstream hostname port & [storage-level]]
   (.socketTextStream dstream hostname port))
+
+(defn kafka-stream
+  "Create an input stream from the Kafka topics at `topics`."
+  [dstream zk-quorum group-id topics]
+  (KafkaUtils/createStream dstream zk-quorum group-id (HashMap. topics)))
