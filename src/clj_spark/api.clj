@@ -239,7 +239,12 @@ partition into an array."
   [dstream hostname port & [storage-level]]
   (.socketTextStream dstream hostname port))
 
+(defn topic-map
+  "Create a java.util.HashMap and make sure the values are integers."
+  [topics]
+  (HashMap. (into {} (for [[k v] topics] [k (int v)]))))
+
 (defn kafka-stream
   "Create an input stream from the Kafka topics at `topics`."
   [dstream zk-quorum group-id topics]
-  (KafkaUtils/createStream dstream zk-quorum group-id (HashMap. topics)))
+  (KafkaUtils/createStream dstream zk-quorum group-id (topic-map topics)))
